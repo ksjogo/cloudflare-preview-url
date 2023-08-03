@@ -20,6 +20,9 @@ async function run() {
     const waitForDeploymentReady = core.getInput('wait_until_ready')
     const environment = core.getInput('environment', { required: false })
     const inputHash = core.getInput('commit_hash', { required: false })
+    const skipSourceCheck = core.getInput('skip_source_check', {
+      required: false
+    })
     const commitHash = inputHash === '' || inputHash === null ? null : inputHash
 
     core.info(
@@ -34,7 +37,8 @@ async function run() {
       githubRepo,
       githubBranch,
       environment,
-      commitHash
+      commitHash,
+      skipSourceCheck
     )
 
     if (waitForDeploymentReady === 'true') {

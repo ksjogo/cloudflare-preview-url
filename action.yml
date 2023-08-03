@@ -20,6 +20,10 @@ inputs:
   branch:
     description: "Optional branch name to filter deployments on. Useful when the branch name is not available in the action context."
     required: false
+  skip_source_check:
+    description: "Set to true to skip the matching repo check - in some deployment cases Cloudflare will not have that info"
+    required: false
+    default: false
 name: Cloudflare Preview URL
 outputs:
   preview_url:

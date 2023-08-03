@@ -11397,7 +11397,8 @@ var __webpack_exports__ = {}
     repo,
     branch,
     environment,
-    commitHash
+    commitHash,
+    skipSourceCheck
   ) {
     const apiUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/pages/projects/${projectId}/deployments`
 
@@ -11433,7 +11434,11 @@ var __webpack_exports__ = {}
     const builds = data.result
       .filter(
         (d) =>
-          d && d.source && d.source.config && d.source.config.repo_name === repo
+          skipSourceCheck ||
+          (d &&
+            d.source &&
+            d.source.config &&
+            d.source.config.repo_name === repo)
       )
       .filter(
         (d) =>

@@ -9,7 +9,8 @@ export default async function getDeploymentUrl(
   repo,
   branch,
   environment,
-  commitHash
+  commitHash,
+  skipSourceCheck
 ) {
   const apiUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/pages/projects/${projectId}/deployments`
 
@@ -45,7 +46,8 @@ export default async function getDeploymentUrl(
   const builds = data.result
     .filter(
       (d) =>
-        d && d.source && d.source.config && d.source.config.repo_name === repo
+        skipSourceCheck ||
+        (d && d.source && d.source.config && d.source.config.repo_name === repo)
     )
     .filter(
       (d) =>
