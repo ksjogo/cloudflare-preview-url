@@ -11431,34 +11431,37 @@ var __webpack_exports__ = {}
     core.info(`Found ${data.result.length} deployments`)
     core.debug(`Looking for matching deployments ${repo}/${branch}`)
 
-    const builds = data.result
-      .filter(
-        (d) =>
-          skipSourceCheck ||
-          (d &&
-            d.source &&
-            d.source.config &&
-            d.source.config.repo_name === repo)
-      )
-      .filter(
-        (d) =>
-          d &&
-          d.deployment_trigger &&
-          d.deployment_trigger.metadata.branch === branch
-      )
-      .filter((d) => {
-        if (environment && environment.length > 0) {
-          return d.environment === environment
-        } else {
-          return true
-        }
-      })
-      .filter(
-        (d) =>
-          commitHash === null ||
-          (d.deployment_trigger.metadata !== null &&
-            d.deployment_trigger.metadata.commit_hash === commitHash)
-      )
+    let builds = data.result.filter(
+      (d) =>
+        skipSourceCheck ||
+        (d && d.source && d.source.config && d.source.config.repo_name === repo)
+    )
+    core.debug(`${builds.length} after source`)
+
+    builds = builds.filter(
+      (d) =>
+        d &&
+        d.deployment_trigger &&
+        d.deployment_trigger.metadata.branch === branch
+    )
+    core.debug(`${builds.length} after branch`)
+
+    builds = builds.filter((d) => {
+      if (environment && environment.length > 0) {
+        return d.environment === environment
+      } else {
+        return true
+      }
+    })
+    core.debug(`${builds.length} after environment`)
+
+    builds = builds.filter(
+      (d) =>
+        commitHash === null ||
+        (d.deployment_trigger.metadata !== null &&
+          d.deployment_trigger.metadata.commit_hash === commitHash)
+    )
+    core.debug(`${builds.length} after commithash`)
 
     core.info(`Found ${builds.length} matching builds`)
     if (!builds || builds.length <= 0) {
@@ -11539,6 +11542,9 @@ var __webpack_exports__ = {}
       const waitForDeploymentReady = core.getInput('wait_until_ready')
       const environment = core.getInput('environment', { required: false })
       const inputHash = core.getInput('commit_hash', { required: false })
+      const skipSourceCheck = core.getInput('skip_source_check', {
+        required: false
+      })
       const commitHash =
         inputHash === '' || inputHash === null ? null : inputHash
 
@@ -11554,7 +11560,8 @@ var __webpack_exports__ = {}
         githubRepo,
         githubBranch,
         environment,
-        commitHash
+        commitHash,
+        skipSourceCheck
       )
 
       if (waitForDeploymentReady === 'true') {
